@@ -51,25 +51,25 @@ pipeline {
         stage('Build & Push Docker Image') {
             environment {
                 DOCKER_IMAGE = 'claudeeke/register-app-pipeline'
-                DOCKER_TAG = 'latest'
+                DOCKER_TAG = BUILD_NUMBER
                 DOCKER_REGISTRY = 'docker.io'
             }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credential', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                    sh "docker build -t ${DOCKER_IMAGE}:$DOCKER_TAG ."
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                     sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${DOCKER_REGISTRY}"
-                    sh "docker push ${DOCKER_IMAGE}:$DOCKER_TAG"
+                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
         }
 
-        stage('Cleanup Artifacts') {
+        '''stage('Cleanup Artifacts') {
             steps {
                 script {
                     sh "docker rmi ${DOCKER_IMAGE}:$DOCKER_TAG"
                     sh "docker rmi ${DOCKER_IMAGE}:latest"
                 }
             }
-        }
+        }'''
     }
 }
