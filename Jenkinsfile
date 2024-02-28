@@ -4,6 +4,11 @@ pipeline {
         jdk 'Java17'
         maven 'Maven3'
     }
+    environment {
+        DOCKER_IMAGE = 'claudeeke/register-app-pipeline'
+        DOCKER_TAG = 'latest'
+        DOCKER_REGISTRY = 'docker.io'
+    }
 
     stages {
         stage('Cleanup Workspace') {
@@ -49,17 +54,11 @@ pipeline {
         }
 
         stage('Build & Push Docker Image') {
-            environment {
-                DOCKER_IMAGE = 'claudeke/register-app-pipeline'
-                DOCKER_TAG = 'latest'
-                DOCKER_REGISTRY = 'docker.io'
-            }
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credential') {
-                        sh "docker build -t ${DOCKER_IMAGE}:$DOCKER_TAG ."
-                        sh "docker push ${DOCKER_IMAGE}:$DOCKER_TAG"
-                    }
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credential', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh "docker build -t ${DOCKER_IMAGE}:$DOCKER_TAG ."
+                    sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} ${DOCKER_REGISTRY}"
+                    sh "docker push ${DOCKER_IMAGE}:$DOCKER_TAG"
                 }
             }
         }
