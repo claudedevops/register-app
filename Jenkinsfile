@@ -8,6 +8,7 @@ pipeline {
                 DOCKER_IMAGE = 'claudeeke/register-app-pipeline'
                 DOCKER_TAG = "${BUILD_NUMBER}"
                 DOCKER_REGISTRY = 'docker.io'
+                JENKINS_API_TOKEN = credentials('JENKINS_API_TOKEN')
             }
 
     stages {
