@@ -62,5 +62,14 @@ pipeline {
                 }
             }
         }
+
+        stage('Cleanup Artifacts') {
+            steps {
+                script {
+                    sh "docker rmi ${DOCKER_IMAGE}:$DOCKER_TAG"
+                    sh "docker rmi ${DOCKER_IMAGE}:latest"
+                }
+            }
+        }
     }
 }
