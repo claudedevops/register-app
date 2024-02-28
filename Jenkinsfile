@@ -51,7 +51,7 @@ pipeline {
         stage('Build & Push Docker Image') {
             environment {
                 DOCKER_IMAGE = 'claudeeke/register-app-pipeline'
-                DOCKER_TAG = '${BUILD_NUMBER}'
+                DOCKER_TAG = "${BUILD_NUMBER}"
                 DOCKER_REGISTRY = 'docker.io'
             }
             steps {
