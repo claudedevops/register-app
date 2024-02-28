@@ -70,5 +70,11 @@ pipeline {
                 }
             }
         }
+
+        stage('Trigger CD Pipeline') {
+            steps {
+                build job: 'register-app-cd-pipeline'
+            }
+        }
     }
 }
